@@ -8,8 +8,7 @@ const housingSchema = new mongoose.Schema({
   bathrooms: { type: Number, required: true },
   description: { type: String },
   address: { type: mongoose.Schema.Types.ObjectId, ref: 'Address', required: true },
-  isActive: { type: Boolean, default: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  isActive: { type: Boolean, default: true }
 }, { timestamps: true })
 
 export default mongoose.model('Housing', housingSchema)

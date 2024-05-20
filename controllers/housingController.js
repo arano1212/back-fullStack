@@ -37,6 +37,21 @@ const createHousing = async (req, res) => {
   }
 }
 
+const getAllHousing = async (req, res) => {
+  try {
+    const housings = await Housing.find({ isActive: true }).populate('address')
+    if (!housings) {
+      return res.status(404).json({ msg: 'housings no found' })
+    }
+    res.status(200).json(housings)
+  } catch (error) {
+    res.status(404).json({ error: error.message })
+  }
+}
+
+
+
 export {
-  createHousing
+  createHousing,
+  getAllHousing
 }
