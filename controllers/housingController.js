@@ -49,9 +49,70 @@ const getAllHousing = async (req, res) => {
   }
 }
 
+const getHousingById = async (req, res) => {
+  if (!req.params.housingId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({ msg: 'invalid user ID' })
+  }
+  try {
+    const housing = await Housing.findById({ _id: req.params.housingId, isActive: true }).populate('address')
+    if (!housing) {
+      return res.status(404).json({ msg: 'housing not found' })
+    }
+    res.status(200).json(housing)
+  } catch (error) {
+    res.status({ error: error.message })
+  }
+}
 
+const updateHousingById = async (req, res) => {
+  if (!req.params.housingId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({ msg: 'invalid movie ID' })
+  }
+
+  try {
+    const housing = await Housing.findByIdAndUpdate(req.params.housingId, req.body, { new: true })
+    if (!housing) {
+      return res.status(404).json({ msg: 'user not found' })
+    }
+    res.status(200).json(housing)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
+
+const deleteHousingrById = async (req, res) => {
+  if (!req.params.housingId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({ msg: 'invalid user ID' })
+  }
+
+  if (req.query.destroy === 'true') {
+    try {
+      const housing = await Housing.findByIdAndDelete(req.params.housingId)
+      if (!housing) {
+        return res.status(404).json({ msg: 'user not found' })
+      }
+      return res.status(204).json()
+    } catch (error) {
+      return res.status(400).json({ error: error.message })
+    }
+  }
+
+  try {
+    const housing = await Housing.findByIdAndUpdate(req.params.housingId, { isActive: false }, { new: false })
+
+    if (!housing || housing.isActive === false) {
+      return res.status(404).json({ msg: 'movie not found' })
+    }
+    res.status(204).json()
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
 
 export {
   createHousing,
-  getAllHousing
+  getAllHousing,
+  getHousingById,
+  updateHousingById,
+  deleteHousingrById
 }
